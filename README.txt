@@ -60,6 +60,17 @@ IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
 	Taxonomy database
 	output: TaxonProfile/<sample>TaxonProfile.txt
 
+*** Modeling rarefaction curve
+(1) subsampling
+(2) re-analysis
+	depth, number of species, number of genus, number of genes
+	saves in Rarefaction_analysis/
+(3) modeling: number of species, number of genus, number of genes(y) ~ sequencing depth (d)
+	results save in Rarefaction_analysis/
+	model 1: y(d) = B0+B1*d+B2*d^2 (Code/Rarefaction_Quadratic.R)
+	model 2: y(d) = B0+B1*d+B2*d^2+B3*d^3 (Code/Rarefaction_Cubic.R)
+	model 3: y(d) = a*d^0.5
+
 ########################################################################################
 Some details about software
 ########################################################################################
