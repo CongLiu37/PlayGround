@@ -264,6 +264,6 @@ def diamond_blastx(query,db,out,threads):
     threads: number of threads
     """
     cmd = home+"miniconda3/bin/diamond blastx -p "+str(threads)+" -d "+db
-    cmd = cmd + " -q "+query+" --very-sensitive -e 0.00001 --id 50 --daa "+out
+    cmd = cmd + " -q "+query+" --sensitive -e 0.00001 --id 50 --daa "+out
     os.system(cmd)#-b 65
 
