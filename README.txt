@@ -65,11 +65,18 @@ IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
 (2) re-analysis
 	depth, number of species, number of genus, number of genes
 	saves in Rarefaction_analysis/
-(3) modeling: number of species, number of genus, number of genes(y) ~ sequencing depth (d)
+(3) modeling: number of species, number of genus, number of genes(y) ~ sequencing depth (x)
 	results save in Rarefaction_analysis/
-	model 1: y(d) = B0+B1*d+B2*d^2 (Code/Rarefaction_Quadratic.R)
-	model 2: y(d) = B0+B1*d+B2*d^2+B3*d^3 (Code/Rarefaction_Cubic.R)
-	model 3: y(d) = a*d^0.5
+	y = y(x), y(0) = 0
+	model 1: y(x) = B_0+B_1*x+B_2*x^2 (Code/Rarefaction_1.R)
+	model 2: y(x) = B_0+B_1*x+B_2*x^2+B_3*x^3 (Code/Rarefaction_2.R)
+	model 3: y(x) = a*x^b, a>0, 0<b<1 (Code/Rarefaction_3.R)
+	model 4: y(x) = a+b/x, a>0, b<0, ylim = a (Code/Rarefaction_4.R)
+	model 5: y(x) = a*x/(1+b*x), ylim = a/b (Code/Rarefaction_5.R)
+
+	model 6: y(x) = b-b*a^x, 0<a<1, b>0, ylim = b (Code/Rarefaction_6.R)
+	model 7: y(x) = log_b(ax+1), a>0, b>1 (Code/Rarefaction_7.R)
+ 
 
 ########################################################################################
 Some details about software
