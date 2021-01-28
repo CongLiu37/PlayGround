@@ -4,6 +4,6 @@ module load anaconda3/personal
 
 echo "Start"
 
-time python3 /rds/general/user/cl3820/home/Code/TaxonProfile_PGcomcol3_Bimp.py LF_F18 Bombus_impatiens 100
+time python3 /rds/general/user/cl3820/home/Code/TaxonProfile.py LF_F18 *_* 100
 
 echo "Done"

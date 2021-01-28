@@ -41,4 +41,4 @@ if (as.vector(summary(mol))[2] != "try-error"){
   AIC_6 = AIC_calculator(x,y,predic_y,3)
 }else{print("Fail")}
 
-save(AIC_6,a_6,b_6,file = paste("6",argv[2],sep = ""))
+save(AIC_6,a_6,b_6,file = paste("6_",argv[2],sep = ""))

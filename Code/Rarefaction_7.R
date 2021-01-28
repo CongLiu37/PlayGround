@@ -50,4 +50,4 @@ models = subset(models,AIC==AIC_7)
 a_7=models$a
 b_7=models$b
 
-save(AIC_7,a_7,b_7,file = paste("7",argv[2],sep = ""))
+save(AIC_7,a_7,b_7,file = paste("7_",argv[2],sep = ""))
