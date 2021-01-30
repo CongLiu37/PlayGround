@@ -147,7 +147,7 @@ def diamond_blastx(query,db,out,threads):
     """
 
     cmd = home+"miniconda3/bin/diamond blastx -p "+str(threads)+" -d "+db
-    cmd = cmd + " -q "+query+" --sensitive -e 0.00001 --id 50 -b 15 --out "+out+" -f 6"
+    cmd = cmd + " -q "+query+" --sensitive -e 0.00001 --id 50 -b 15 -c 1 --out "+out+" -f 6"
 
     os.system(cmd)
 
@@ -244,6 +244,28 @@ def extract_blast(IDs,blastfile,output):
         for ID in IDs:
             if ID in line:
                 out.write(line)
+
+def extract_fastq(IDs,fastq,output):
+    """
+    Extract sequences according to given IDs.
+
+    INPUT:
+    IDs (list): sequence IDs
+    fastq (path): input fastq file for extraction (fastq)
+    output (path): fasta
+
+    OUTPUT:
+    output
+    """
+
+    input = file_list(fastq)
+    os.system("touch "+output)
+    out = open(output,"w")
+    for i in range(0,len(input),4):
+        for ID in IDs:
+            if ID in input[i]:
+                out.write(">"+ID+"\n")
+                out.write(input[i+1]+"\n")
 
 
 ##########################################################################

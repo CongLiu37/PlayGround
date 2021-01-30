@@ -45,6 +45,23 @@ PGcomcol3_Bimp
     2562765 (4.30%) aligned concordantly >1 times
 14.81% overall alignment rate
 
+PGcomcol4a_Bimp
+54493550 reads; of these:
+  54493550 (100.00%) were paired; of these:
+    49274544 (90.42%) aligned concordantly 0 times
+    3159394 (5.80%) aligned concordantly exactly 1 time
+    2059612 (3.78%) aligned concordantly >1 times
+9.58% overall alignment rate
+
+PGcomcol4b_Bimp
+50950233 reads; of these:
+  50950233 (100.00%) were paired; of these:
+    44197093 (86.75%) aligned concordantly 0 times
+    4644360 (9.12%) aligned concordantly exactly 1 time
+    2108780 (4.14%) aligned concordantly >1 times
+13.25% overall alignment rate
+
+####End####
 
 III Diamond alignment (Code/TaxonProfile.py)
 (1) diamond database
