@@ -36,7 +36,7 @@ II Filter host reads (Code/TaxonProfile.py)
 	        bowtie2/<sample>_sorted.bam
 	        bowtie2/depth_<sample>_<host>.txt
 
-####Summary of results####
+##########################Summary of results##########################
 PGcomcol3_Bimp
 59532563 reads; of these:
   59532563 (100.00%) were paired; of these:
@@ -61,7 +61,25 @@ PGcomcol4b_Bimp
     2108780 (4.14%) aligned concordantly >1 times
 13.25% overall alignment rate
 
-####End####
+PGnos_high_hv13-1
+975761 reads; of these:
+  975761 (100.00%) were paired; of these:
+    938132 (96.14%) aligned concordantly 0 times
+    3009 (0.31%) aligned concordantly exactly 1 time
+    34620 (3.55%) aligned concordantly >1 times
+3.86% overall alignment rate
+
+PGnos_high_hv13-2
+45776057 reads; of these:
+  45776057 (100.00%) were paired; of these:
+    41664402 (91.02%) aligned concordantly 0 times
+    191968 (0.42%) aligned concordantly exactly 1 time
+    3919687 (8.56%) aligned concordantly >1 times
+8.98% overall alignment rate
+
+PGnos_inter
+PGpollen_fresh
+##########################End##########################
 
 III Diamond alignment (Code/TaxonProfile.py)
 (1) diamond database
@@ -69,12 +87,12 @@ III Diamond alignment (Code/TaxonProfile.py)
 (2) alignment
 	input: nr_diamond/*.dmnd
 	       bowtie2/<sample>_filterhost.[12].fq
-	e-value < 1e-5, identity > 50%, --very-sensitive
-	output: Blast/<sample>_[12].daa
+	e-value < 1e-5, identity > 50%, --sensitive, -b 100, -c 1, -p 150, -f 6 (out format: blast tabular)
+	output: Blast/<sample>_[12].blast
 
 IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
-(1) daa to rma (daa2rma)
-	input: Blast/<sample>_[12].daa
+(1) blast to rma (daa2rma)
+	input: Blast/<sample>_[12].blast
 	weighted LCA
 	databse: MEGANDatabase/megan-map-Jul2020-2.db (nr -> Taxonomy)
 	output: MEGAN/<sample>.rma
@@ -84,11 +102,14 @@ IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
 	output: TaxonProfile/<sample>TaxonProfile.txt
 
 *** Modeling rarefaction curve
-(1) subsampling
+(1) subsampling (vsearch --fastx_subsample) (<i> in 1:10)
+	input: raw_raw_data/<sample>_1.fq.gz
+	subsample, extract sampled sequence IDs
+	Extract corresponded blast hits
+	Extract corresponded clean reads (host filtered): TaxonRarefaction/<i>_<sample>_<percentage>_[12].fasta
+	Taxon profile: TaxonRarefaction_i/i_<sample>_<percentage>TaxonProfile.txt
 (2) re-analysis
-	depth, number of species, number of genus, number of genes
-	saves in Rarefaction_analysis/
-(3) modeling: number of species, number of genus, number of genes(y) ~ sequencing depth (x)
+(3) modeling: number of species, number of genus, number of genes (y) ~ sequencing depth (x)
 	results save in Rarefaction_analysis/
 	y = y(x), y(0) = 0
 	model 1: y(x) = B_0+B_1*x+B_2*x^2 (Code/Rarefaction_1.R)
