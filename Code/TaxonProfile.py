@@ -47,18 +47,18 @@ if args[2] != "*_*":
     print("Compute depth:"+str(end-start))
     #Alignment
     start = time.time()
-    main.diamond_blastx(query=home+"home/bowtie2/"+args[1]+"_filterhost.1.fq",db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_1.daa",threads=args[3])
+    main.diamond_blastx(query=home+"home/bowtie2/"+args[1]+"_filterhost.1.fq",db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_1.blast",threads=args[3])
     end = time.time()
     print("Alignment 1:"+str(end-start))
 
     start = time.time()
-    main.diamond_blastx(query=home+"home/bowtie2/"+args[1]+"_filterhost.2.fq",db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_2.daa",threads=args[3])
+    main.diamond_blastx(query=home+"home/bowtie2/"+args[1]+"_filterhost.2.fq",db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_2.blast",threads=args[3])
     end = time.time()
     print("Alignment 2:"+str(end-start))
 
     #MEGAN
     start = time.time()
-    main.run_MEGAN6(blastfile1=home+"ephemeral/Blast/"+args[1]+"_1.daa",blastfile2=home+"ephemeral/Blast/"+args[1]+"_2.daa",output=home+"ephemeral/MEGAN/"+args[1]+".rma",mdb=home+"home/MEGANDatabse/megan-map-Jul2020-2.db",threads=args[3])
+    main.run_MEGAN6(blastfile1=home+"ephemeral/Blast/"+args[1]+"_1.blast",blastfile2=home+"ephemeral/Blast/"+args[1]+"_2.blast",output=home+"ephemeral/MEGAN/"+args[1]+".rma",mdb=home+"home/MEGANDatabse/megan-map-Jul2020-2.db",threads=args[3])
     end = time.time()
     print("Get rma"+str(end-start))
 
@@ -72,18 +72,18 @@ else:
     print("Start aligning...")
     #Alignment
     start = time.time()
-    main.diamond_blastx(query=fq_gz1,db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_1.daa",threads=args[3])
+    main.diamond_blastx(query=fq_gz1,db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_1.blast",threads=args[3])
     end = time.time()
     print("Alignment 1:"+str(end-start))
 
     start = time.time()
-    main.diamond_blastx(query=fq_gz2,db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_2.daa",threads=args[3])
+    main.diamond_blastx(query=fq_gz2,db=home+"home/nr_diamond/nr.dmnd",out=home+"ephemeral/Blast/"+args[1]+"_2.blast",threads=args[3])
     end = time.time()
     print("Alignment 2:"+str(end-start))
 
     #MEGAN
     start = time.time()
-    main.run_MEGAN6(blastfile1=home+"ephemeral/Blast/"+args[1]+"_1.daa",blastfile2=home+"ephemeral/Blast/"+args[1]+"_2.daa",output=home+"ephemeral/MEGAN/"+args[1]+".rma",mdb=home+"home/MEGANDatabse/megan-map-Jul2020-2.db",threads=args[3])
+    main.run_MEGAN6(blastfile1=home+"ephemeral/Blast/"+args[1]+"_1.blast",blastfile2=home+"ephemeral/Blast/"+args[1]+"_2.blast",output=home+"ephemeral/MEGAN/"+args[1]+".rma",mdb=home+"home/MEGANDatabse/megan-map-Jul2020-2.db",threads=args[3])
     end = time.time()
     print("Get rma"+str(end-start))
 

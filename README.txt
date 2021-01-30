@@ -30,15 +30,21 @@ II Filter host reads (Code/TaxonProfile.py)
 (2) bowtie2 map
 	input: clean_data/<sample>.fq.gz
 	       reference_genome/<host>.*.bt2 (referred as <host>)
-	only take concordantly alignment into consideration, split un-mapped reads (bowtie2)
+	only take concordantly alignment into consideration, spit un-mapped reads (bowtie2)
 	convert sam to bam, sort bam, compute depth
 	output: bowtie2/<sample>_filterhost.[12].fq
 	        bowtie2/<sample>_sorted.bam
 	        bowtie2/depth_<sample>_<host>.txt
 
 ####Summary of results####
-<sample>	<host>	percentage_align
-PGcomcol3_Bimp	Bombus_impatiens	14.81
+PGcomcol3_Bimp
+59532563 reads; of these:
+  59532563 (100.00%) were paired; of these:
+    50717312 (85.19%) aligned concordantly 0 times
+    6252486 (10.50%) aligned concordantly exactly 1 time
+    2562765 (4.30%) aligned concordantly >1 times
+14.81% overall alignment rate
+
 
 III Diamond alignment (Code/TaxonProfile.py)
 (1) diamond database
@@ -122,6 +128,8 @@ Fields: query acc.ver, subject acc.ver, % identity, alignment length, mismatches
 
 (4) nr database
 
+(5) Diamond
+conda install
 
 (6) MEGAN
 #https://software-ab.informatik.uni-tuebingen.de/download/megan6/welcome.html
@@ -131,3 +139,6 @@ $ bash MEGAN_Community_unix_6_18_4.sh
 #Download MEGAN database: nr -> taxon
 $wget https://software-ab.informatik.uni-tuebingen.de/download/megan6/megan-map-Jul2020-2.db.zip
 $unzip megan-map-Jul2020-2.db.zip
+
+(7) vsearch
+conda install

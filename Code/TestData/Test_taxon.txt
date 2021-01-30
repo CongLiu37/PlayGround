@@ -1,0 +1,21 @@
+# Number of reads:   3
+# Number of matches: 6
+# Alignment mode:  Classifier
+# Classifications: Taxonomy SEED EGGNOG GTDB EC INTERPRO2GO
+# Summary:
+## @Creator	RMA2Info
+## @CreationDate	Thu Jan 28 22:34:27 CST 2021
+## @ContentType	Summary4
+## @Names	TestDia
+## @BlastMode	Classifier
+## @Uids	1611844456404
+## @Sizes	3.0
+## @TotalReads	3
+## @AdditionalReads	0
+## Classifications:
+##  Taxonomy (1 classes) SEED (1 classes) EGGNOG (1 classes) GTDB (1 classes) EC (1 classes) INTERPRO2GO (1 classes)
+## @Algorithm	Taxonomy	merge
+## @Parameters	
+## 
+# Class to count for 'Taxonomy':
+# Reads to class for 'Taxonomy':
