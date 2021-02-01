@@ -168,7 +168,7 @@ def run_MEGAN6(blastfile1,blastfile2,output,mdb,threads):
     output: rma file
     """
 
-    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --paired -alg weighted -top 50 -mdb "+mdb+" -o "+output
+    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --minSupportPercent 0 --paired -top 50 -mdb "+mdb+" -o "+output
     os.system(cmd)
     return(0)
 

@@ -77,8 +77,22 @@ PGnos_high_hv13-2
     3919687 (8.56%) aligned concordantly >1 times
 8.98% overall alignment rate
 
-PGnos_inter
+PGnos_inter_hv15
+<pre>53648951 reads; of these:
+  53648951 (100.00%) were paired; of these:
+    46682350 (87.01%) aligned concordantly 0 times
+    9007 (0.02%) aligned concordantly exactly 1 time
+    6957594 (12.97%) aligned concordantly &gt;1 times
+12.99% overall alignment rate</pre>
+
 PGpollen_fresh
+52072942 reads; of these:
+  52072942 (100.00%) were paired; of these:
+    50199144 (96.40%) aligned concordantly 0 times
+    745418 (1.43%) aligned concordantly exactly 1 time
+    1128380 (2.17%) aligned concordantly >1 times
+3.60% overall alignment rate
+
 ##########################End##########################
 
 III Diamond alignment (Code/TaxonProfile.py)
@@ -100,6 +114,19 @@ IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
 	input: MEGAN/<sample>.rma
 	Taxonomy database
 	output: TaxonProfile/<sample>TaxonProfile.txt
+(3) statistics and visualization
+	phylogenetic tree + abundance ...
+
+V Filter reference reads
+(1) reference genomes
+	input: TaxonProfile/<sample>TaxonProfile.txt
+	extract taxid
+	download genome/nucleotide
+	build bowtie2 index
+(2) bowtie2 map
+	map, compute depth
+	
+
 
 *** Modeling rarefaction curve
 (1) subsampling (vsearch --fastx_subsample) (<i> in 1:10)
@@ -108,7 +135,7 @@ IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
 	Extract corresponded blast hits
 	Extract corresponded clean reads (host filtered): TaxonRarefaction/<i>_<sample>_<percentage>_[12].fasta
 	Taxon profile: TaxonRarefaction_i/i_<sample>_<percentage>TaxonProfile.txt
-(2) re-analysis
+(2) 
 (3) modeling: number of species, number of genus, number of genes (y) ~ sequencing depth (x)
 	results save in Rarefaction_analysis/
 	y = y(x), y(0) = 0
