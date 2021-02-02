@@ -3,7 +3,7 @@ DESCRIPTION:
 Python toolkit for MRes project.
 
 DEPENDENCIES:
-fastqc, trimmomatic, blast+, MEGAN6, bowtie2, diamond, vsearch
+fastqc, trimmomatic, MEGAN6, bowtie2, diamond, vsearch
 """
 
 home="/rds/general/user/cl3820/home/"
@@ -147,7 +147,7 @@ def diamond_blastx(query,db,out,threads):
     """
 
     cmd = home+"miniconda3/bin/diamond blastx -p "+str(threads)+" -d "+db
-    cmd = cmd + " -q "+query+" --sensitive -e 0.00001 --id 50 -b 15 -c 1 --out "+out+" -f 6"
+    cmd = cmd + " -q "+query+" --sensitive -e 0.00001 --id 50 -b 250 -c 1 --out "+out+" -f 6"
 
     os.system(cmd)
 
@@ -185,9 +185,83 @@ def rma_extract(rma, output):
     """
 
     cmd=home+"megan/tools/rma2info -i "+rma+" -o "+output
-    cmd=cmd+" -l true -m true -c2c Taxonomy -r2c Taxonomy -r true"
+    cmd=cmd+" -l true -m true -c2c Taxonomy -r true"
     os.system(cmd)
     return(0)
+
+def taxon_statistics(sampleTaxonProfile,output,sample,rare):
+    """
+    Statistics of taxon profile (e.g. number of species, number of genus).
+    Taxonomic ranks are represented by single letter (e.g. S, G).
+
+    INPUT:
+    sampleTaxonProfile (path): taxon profile, generated from rma2info.
+    output (path): one line, one rank.
+    sample (string): sample name.
+    rare (float): rarefaction percentage. 0-100.
+
+    OUTPUT:
+    output
+    """
+
+    f = open(sampleTaxonProfile,"r")
+    NO = 0
+    K = 0
+    P = 0
+    C = 0
+    O = 0
+    F = 0
+    G = 0
+    S = 0
+    for line in f:
+        if line[0] != "#":
+            if line[0] == "-":
+                NO = NO + 1
+            elif line[0] == "K":
+                K = K + 1
+            elif line[0] == "P":
+                P = P + 1
+            elif line[0] == "C":
+                C = C + 1
+            elif line[0] == "O":
+                O = O + 1
+            elif line[0] == "F":
+                F = F + 1
+            elif line[0] == "G":
+                G = G + 1
+            elif line[0] == "S":
+                S = S + 1
+    f.close()
+    os.system("touch "+output)
+    out = open(output,"w")
+    out.write(sample+str(rare)+"No   "+str(NO)+"\n")
+    out.write(sample+str(rare)+"K    "+str(K)+"\n")
+    out.write(sample+str(rare)+"P    "+str(P)+"\n")
+    out.write(sample+str(rare)+"C    "+str(C)+"\n")
+    out.write(sample+str(rare)+"O    "+str(O)+"\n")
+    out.write(sample+str(rare)+"F    "+str(F)+"\n")
+    out.write(sample+str(rare)+"G    "+str(G)+"\n")
+    out.write(sample+str(rare)+"S    "+str(S))
+    out.close()
+
+def sorted_speciesID(sampleTaxonProfile,output):
+    f = open(sampleTaxonProfile,"r")
+    dic = {}
+    for line in f:
+        if line[0] == "S":
+            line = line.strip()
+            line = line.split("\t")
+            line[2] = float(line[2])
+            dic[line[1]] = line[2]
+    f.close()
+    dic = sorted(dic.items(),key=lambda kv:(kv[1],kv[0]), reverse=True)
+    os.system("touch "+output)
+    o = open(output,"w")
+    for ID in dic:
+        o.write(str(ID[0])+"\t"+str(ID[1]))
+        o.write("\n")
+
+######################################################
 
 def subsampling_fastq(fastq,percentage,output):
     """

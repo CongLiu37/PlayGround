@@ -3,7 +3,7 @@ DESCRIPTION:
 (1) Sample the raw_raw_data (un-filtered by BGI)
 (2) Extract sampled sequence IDs
 (3) Extract hits from blast file
-(4) Extract corresponded clean reads (host-filtered)
+(4) Extract corresponded host-filtered reads
 (5) Taxon profile (MEGAN6)
 
 i in 1:10
