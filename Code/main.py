@@ -46,7 +46,7 @@ def run_trimmomatic(file1,file2,clean1,clean2,unpaired1,unpaired2,adaptor,thread
     unpaired1/2: Unpaired reads from file1/2 (fastq.gz)
     """
 
-    cmd = "trimmomatic PE -threads "+str(threads)+" -phred33 "
+    cmd = home+"miniconda3/bin/trimmomatic PE -threads "+str(threads)+" -phred33 "
     cmd = cmd + file1+" "+file2+" "+clean1+" "+unpaired1+" "+clean2
     cmd = cmd + " " + unpaired2
     cmd = cmd + " ILLUMINACLIP:"+adaptor+":2:30:10:1:true HEADCROP:15 TRAILING:20 MINLEN:36"
@@ -66,7 +66,7 @@ def run_fastqc(clean1,clean2,output, threads):
     QC report saves in output
     """
    
-    qc = "fastqc -o " + output + " " + "-t "+str(threads)+" "+clean1+" "+clean2
+    qc = home+"miniconda3/bin/fastqc -o " + output + " " + "-t "+str(threads)+" "+clean1+" "+clean2
     os.system(qc)
     return(0)
 
