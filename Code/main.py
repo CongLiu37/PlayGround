@@ -168,7 +168,7 @@ def run_MEGAN6(blastfile1,blastfile2,output,mdb,threads):
     output: rma file
     """
 
-    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --minSupportPercent 0 --paired -top 50 -mdb "+mdb+" -o "+output
+    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --minSupportPercent 0 --paired -top 50 -alg weighted -mdb "+mdb+" -o "+output
     os.system(cmd)
     return(0)
 
@@ -206,6 +206,7 @@ def taxon_statistics(sampleTaxonProfile,output,sample,rare):
 
     f = open(sampleTaxonProfile,"r")
     NO = 0
+    D = 0
     K = 0
     P = 0
     C = 0
@@ -217,6 +218,8 @@ def taxon_statistics(sampleTaxonProfile,output,sample,rare):
         if line[0] != "#":
             if line[0] == "-":
                 NO = NO + 1
+            elif line[0] == "D":
+                D = D + 1
             elif line[0] == "K":
                 K = K + 1
             elif line[0] == "P":
@@ -232,16 +235,18 @@ def taxon_statistics(sampleTaxonProfile,output,sample,rare):
             elif line[0] == "S":
                 S = S + 1
     f.close()
+
     os.system("touch "+output)
     out = open(output,"w")
-    out.write(sample+str(rare)+"No   "+str(NO)+"\n")
-    out.write(sample+str(rare)+"K    "+str(K)+"\n")
-    out.write(sample+str(rare)+"P    "+str(P)+"\n")
-    out.write(sample+str(rare)+"C    "+str(C)+"\n")
-    out.write(sample+str(rare)+"O    "+str(O)+"\n")
-    out.write(sample+str(rare)+"F    "+str(F)+"\n")
-    out.write(sample+str(rare)+"G    "+str(G)+"\n")
-    out.write(sample+str(rare)+"S    "+str(S))
+    out.write(sample+"\t"+str(rare)+"   No   "+str(NO)+"\n")
+    out.write(sample+"\t"+str(rare)+"    D    "+str(K)+"\n")
+    out.write(sample+"\t"+str(rare)+"    K    "+str(K)+"\n")
+    out.write(sample+"\t"+str(rare)+"    P    "+str(P)+"\n")
+    out.write(sample+"\t"+str(rare)+"    C    "+str(C)+"\n")
+    out.write(sample+"\t"+str(rare)+"    O    "+str(O)+"\n")
+    out.write(sample+"\t"+str(rare)+"    F    "+str(F)+"\n")
+    out.write(sample+"\t"+str(rare)+"    G    "+str(G)+"\n")
+    out.write(sample+"\t"+str(rare)+"    S    "+str(S))
     out.close()
 
 def sorted_speciesID(sampleTaxonProfile,output):
@@ -260,8 +265,6 @@ def sorted_speciesID(sampleTaxonProfile,output):
     for ID in dic:
         o.write(str(ID[0])+"\t"+str(ID[1]))
         o.write("\n")
-
-######################################################
 
 def subsampling_fastq(fastq,percentage,output):
     """
@@ -296,7 +299,9 @@ def extract_fastaIDs(fasta):
         if line[0] == ">":
             line = line.strip()
             l.append(line[1:])
+    f.close()
     return l
+
 
 def extract_blast(IDs,blastfile,output):
     """
@@ -318,6 +323,8 @@ def extract_blast(IDs,blastfile,output):
         for ID in IDs:
             if ID in line:
                 out.write(line)
+    blast.close()
+    out.close()
 
 def extract_fastq(IDs,fastq,output):
     """
@@ -332,14 +339,15 @@ def extract_fastq(IDs,fastq,output):
     output
     """
 
-    input = file_list(fastq)
+    inputs = file_list(fastq)
     os.system("touch "+output)
     out = open(output,"w")
-    for i in range(0,len(input),4):
+    for i in range(0,len(inputs),4):
         for ID in IDs:
-            if ID in input[i]:
+            if ID in inputs[i]:
                 out.write(">"+ID+"\n")
-                out.write(input[i+1]+"\n")
+                out.write(inputs[i+1]+"\n")
+     out.close()
 
 
 ##########################################################################

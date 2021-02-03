@@ -1,15 +1,86 @@
 # MResProject
 
 ########################################################################################
+Scripts
+########################################################################################
+(1) main.py
+(2) main.R
+
+(3) QualityControl.py
+USAGE:
+	$python QualityControl.py <sample> <threads>
+DEPENDENCIES:
+	main.py, fastqc, trimmomatic
+INPUT:
+	raw_data/<sample>_[12].fq.gz
+FUNCTIONS & OUTPUT:
+	fastqc check of raw data (QualityControl/raw/*)
+	trimmomatic filter: (clean_data/<sample>_[12].fq.gz)
+		remove nextera adaptor
+		crop 15 bases from heads
+		crop bases with quality score lower than 20 from tails
+		filter reads shorter than 36 bp
+	fastqc check of clean data (QualityControl/clean/*)
+
+(4) FilterHost.py
+USAGE:
+	$python FilterHost.py <sample> <host> <threads>
+DEPENDENCIES:
+	main.py, bowtie2, samtools
+INPUT:
+	clean_data/<sample>_[12].fq.gz
+	reference_genome/<host> (bowtie2 index)
+FUNCTIONS & OUTPUT:
+	bowtie2 mapping (bowtie2/<sample>__filterhost.[12].fq)
+	convert sam to bam, sort bam (bowtie2/<sample>_sorted.bam)
+	compute depth (bowtie2/depth_<sample>_<host>.txt)
+
+(5) Align_nr.py
+USAGE:
+	$python Align_nr.py <sample> <threads>
+DEPENDENCIES:
+	main.py, diamond
+INPUT:
+	bowtie2/<sample>_filterhost.[12].fq
+	nr_diamond/nr.dmnd
+FUNCTIONS & OUTPUT:
+	align reads to nr database (Blast/<sample>_[12].blast)
+
+(6) MEGAN.py
+USAGE:
+	$python MEGAN.py <sample> <threads>
+DEPENDENCIES:
+	main.py, MEGAN6
+INPUT:
+	Blast/<sample>_[12].blast
+	MEGANDatabse/megan-map-Jul2020-2.db
+FUNCTIONS & OUTPUT:
+	MEGAN/<sample>.rma
+	TaxonProfile/<sample>TaxonProfile.txt
+	
+(7) TaxonRarefaction.py
+USAGE:
+	$python TaxonRarefaction.py <sample> <percentage> <threads> <i>
+INPUT:
+	raw_raw_data/<sample>_1.fq.gz
+	Blast/<sample>_[12].blast
+FUNCTIONS & OUTPUT:
+	subsample raw_raw_data/<sample>_1.fq.gz by vsearch (TaxonRarefaction/<i><sample>_<percentage>.fasta)
+	extract sequence IDs from TaxonRarefaction/<i><sample>_<percentage>.fasta, find corresponding blast results (TaxonRarefaction/<i><sample>_<percentage>_[12].blast)
+	MEGAN6 profiling (TaxonRarefaction/<i><sample>_<percentage>.rma, TaxonRarefaction/<i><sample>_<percentage>TaxonProfile.txt)
+
+
+
+########################################################################################
 Pipeline
 Command line produced by functions in Code/main.py
 ########################################################################################
-I Quality control
+I Quality control (Code/QualityControl.py)
 (1) fastqc check
 	input: raw_data/<sample>_[12].fq.gz
 	output: QualityControl/raw.html
 (2) trimmomatic filter
-	input: raw_data/<sample._[12].fq.gz
+	input: raw_data/<sample>._[12].fq.gz
 	remove nextera adaptor
 	crop 15 bases from heads
 	crop bases with quality score lower than 20 from tails
@@ -20,10 +91,10 @@ I Quality control
 	output: QualityControl/raw.html
 
 ####Summary of results####
-QualityControl/raw.html
-QualityControl/clean.html
+QualityControl/raw/raw.html
+QualityControl/clean/clean.html
 
-II Filter host reads (Code/TaxonProfile.py)
+II Filter host reads (Code/FilterHost.py)
 (1) bowtie2 index
 	input: reference_genome/<host>.fasta (genomic)
 	output: reference_genome/<host>.*.bt2 (referred as <host>)
@@ -31,7 +102,7 @@ II Filter host reads (Code/TaxonProfile.py)
 	input: clean_data/<sample>.fq.gz
 	       reference_genome/<host>.*.bt2 (referred as <host>)
 	only take concordantly alignment into consideration, spit un-mapped reads (bowtie2)
-	convert sam to bam, sort bam, compute depth
+	convert sam to bam, sort bam, compute depth (samtools)
 	output: bowtie2/<sample>_filterhost.[12].fq
 	        bowtie2/<sample>_sorted.bam
 	        bowtie2/depth_<sample>_<host>.txt
@@ -95,7 +166,7 @@ PGpollen_fresh
 
 ##########################End##########################
 
-III Diamond alignment (Code/TaxonProfile.py)
+III Diamond alignment (Code/Align_nr.py)
 (1) diamond database
 	nr_diamond/*.dmnd (build from nr database)
 (2) alignment
@@ -104,7 +175,7 @@ III Diamond alignment (Code/TaxonProfile.py)
 	e-value < 1e-5, identity > 50%, --sensitive, -b 100, -c 1, -p 150, -f 6 (out format: blast tabular)
 	output: Blast/<sample>_[12].blast
 
-IV Taxon profile by MEGAN6 (Code/TaxonProfile.py)
+IV Taxon profile by MEGAN6 (Code/MEGAN.py)
 (1) blast to rma (daa2rma)
 	input: Blast/<sample>_[12].blast
 	weighted LCA
@@ -134,7 +205,7 @@ V Filter reference reads
 	subsample, extract sampled sequence IDs
 	Extract corresponded blast hits
 	Extract corresponded clean reads (host filtered): TaxonRarefaction/<i>_<sample>_<percentage>_[12].fasta
-	Taxon profile: TaxonRarefaction_i/i_<sample>_<percentage>TaxonProfile.txt
+	Taxon profile: TaxonRarefaction/i_<sample>_<percentage>TaxonProfile.txt
 (2) 
 (3) modeling: number of species, number of genus, number of genes (y) ~ sequencing depth (x)
 	results save in Rarefaction_analysis/
@@ -197,6 +268,8 @@ Fields: query acc.ver, subject acc.ver, % identity, alignment length, mismatches
 conda install
 
 (6) MEGAN
+#on HPC, first run
+$export _JAVA_OPTIONS='-Djava.io.tmpdir=$TMPDIR'
 #https://software-ab.informatik.uni-tuebingen.de/download/megan6/welcome.html
 $ wget https://software-ab.informatik.uni-tuebingen.de/download/megan6/MEGAN_Community_unix_6_18_4.sh
 $ bash MEGAN_Community_unix_6_18_4.sh
