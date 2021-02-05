@@ -4,7 +4,9 @@ DESCRIPTION:
 (2) Convert sam to bam, sort bam, compute depth (samtools)
 
 ARGUMENTS:
-<sample>, host, threads
+args[1] = <sample>
+args[2] = <host>
+args[3] = <threads>
 """
 
 import os
@@ -14,7 +16,7 @@ import main
 
 home = "/rds/general/user/cl3820/"
 
-args = sys.argv #sample_name, reference_name, threads
+args = sys.argv
 
 file1 = args[1]+"_1"
 file2 = args[1]+"_2"

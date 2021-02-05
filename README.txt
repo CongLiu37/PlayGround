@@ -3,10 +3,10 @@
 ########################################################################################
 Scripts
 ########################################################################################
-(1) main.py
-(2) main.R
+main.py
+main.R
 
-(3) QualityControl.py
+1_QualityControl.py
 USAGE:
 	$python QualityControl.py <sample> <threads>
 DEPENDENCIES:
@@ -15,14 +15,14 @@ INPUT:
 	raw_data/<sample>_[12].fq.gz
 FUNCTIONS & OUTPUT:
 	fastqc check of raw data (QualityControl/raw/*)
-	trimmomatic filter: (clean_data/<sample>_[12].fq.gz)
+	trimmomatic filter: (clean_data/<sample>_[12].fq.gz, clean_data/unpaired_<sample>_[12].fq.gz)
 		remove nextera adaptor
 		crop 15 bases from heads
 		crop bases with quality score lower than 20 from tails
 		filter reads shorter than 36 bp
 	fastqc check of clean data (QualityControl/clean/*)
 
-(4) FilterHost.py
+2_FilterHost.py
 USAGE:
 	$python FilterHost.py <sample> <host> <threads>
 DEPENDENCIES:
@@ -35,7 +35,7 @@ FUNCTIONS & OUTPUT:
 	convert sam to bam, sort bam (bowtie2/<sample>_sorted.bam)
 	compute depth (bowtie2/depth_<sample>_<host>.txt)
 
-(5) Align_nr.py
+3_Align_nr.py
 USAGE:
 	$python Align_nr.py <sample> <threads>
 DEPENDENCIES:
@@ -44,7 +44,24 @@ INPUT:
 	bowtie2/<sample>_filterhost.[12].fq
 	nr_diamond/nr.dmnd
 FUNCTIONS & OUTPUT:
-	align reads to nr database (Blast/<sample>_[12].blast)
+	align reads to nr database. e-value < 1e-5, identity > 50% (Blast/<sample>_[12].blast)
+
+4_FilterBlast.py
+USAGE
+	$python 4_FilterBlast.py <sample>
+DEPENDENCIES:
+	pandas
+FUNCTIONS & OUTPUT:
+	for each read, retain blast hits with lowest e-value 
+	retain hits with e-value <1e-10 and identity > 75% (Blast/<sample>_[12]_filtered.blast>
+
+
+
+
+
+
+
+
 
 (6) MEGAN.py
 USAGE:
@@ -65,9 +82,9 @@ INPUT:
 	raw_raw_data/<sample>_1.fq.gz
 	Blast/<sample>_[12].blast
 FUNCTIONS & OUTPUT:
-	subsample raw_raw_data/<sample>_1.fq.gz by vsearch (TaxonRarefaction/<i><sample>_<percentage>.fasta)
-	extract sequence IDs from TaxonRarefaction/<i><sample>_<percentage>.fasta, find corresponding blast results (TaxonRarefaction/<i><sample>_<percentage>_[12].blast)
-	MEGAN6 profiling (TaxonRarefaction/<i><sample>_<percentage>.rma, TaxonRarefaction/<i><sample>_<percentage>TaxonProfile.txt)
+	subsample raw_raw_data/<sample>_1.fq.gz by vsearch
+	extract sequence IDs from TaxonRarefaction/<i><sample>_<percentage>.fasta, find corresponding blast results
+	MEGAN6 profiling (TaxonRarefaction/<i><sample>_<percentage>TaxonProfile.txt)
 
 
 

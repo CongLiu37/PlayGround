@@ -3,11 +3,15 @@ DESCRIPTION:
 Python toolkit for MRes project.
 
 DEPENDENCIES:
+(1) Softwares
 fastqc, trimmomatic, MEGAN6, bowtie2, diamond, vsearch
+(2) Python modules
+pandas
 """
 
 home="/rds/general/user/cl3820/home/"
 import os
+import pandas as pd
 
 def file_list(file):
     """
@@ -151,6 +155,33 @@ def diamond_blastx(query,db,out,threads):
 
     os.system(cmd)
 
+def blast_filter(blastfile,output,temporary,tag):
+    """
+    Filter blast results.
+    For each read, retain hits with 
+        (1) lowest e-value
+        (2) identity > 75%
+       
+    INPUT:
+    blastfile (path): blast file in format 6/7
+    output (path): output file
+    temporary (directory): directory for temporary files
+
+    OUTPUT:
+    Filtered blast file
+    """
+    os.system("touch "+output)
+    blast = pd.read_table(blastfile,sep="\t",header=None)
+    IDs = blast[0].drop_duplicates()
+    print(str(len(IDs))+" query sequences")
+    for ID in IDs:
+        blast_ID = blast[blast[0] == ID]
+        if float(blast_ID[10].min()) <= 1e-10:
+            blast_ID = blast_ID[blast_ID[10] == blast_ID[10].min()]
+            blast_ID = blast_ID[blast_ID[2] >= 75]
+            blast_ID.to_csv(temporary+"/IDs_blast"+tag+".blast",index=False,header=False,sep="\t")
+            os.system("cat "+temporary+"/IDs_blast"+tag+".blast >> "+output)
+    os.system("rm "+temporary+"/IDs_blast"+tag+".blast")
 
 def run_MEGAN6(blastfile1,blastfile2,output,mdb,threads):
     """
@@ -168,7 +199,7 @@ def run_MEGAN6(blastfile1,blastfile2,output,mdb,threads):
     output: rma file
     """
 
-    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --minSupportPercent 0 --paired -top 50 -alg weighted -mdb "+mdb+" -o "+output
+    cmd = home+"megan/tools/blast2rma -i "+blastfile1+" "+blastfile2+" -f BlastTab --minSupportPercent 0.05 --paired -top 10 -alg weighted -mdb "+mdb+" -o "+output
     os.system(cmd)
     return(0)
 
@@ -286,11 +317,15 @@ def extract_fastaIDs(fasta):
     """
     Extract IDs of sequences from fasta file.
 
-    INPUT
+    INPUT:
     fasta (path): input fasta file
+    output: ID file
 
     RETURN:
     a list composed of sequence IDs
+
+    OUTPUT:
+    output
     """
 
     f = open(fasta,"r")
@@ -301,7 +336,6 @@ def extract_fastaIDs(fasta):
             l.append(line[1:])
     f.close()
     return l
-
 
 def extract_blast(IDs,blastfile,output):
     """
@@ -316,15 +350,10 @@ def extract_blast(IDs,blastfile,output):
     output
     """
 
-    os.system("touch "+output)
-    out = open(output, "w")
-    blast = open(blastfile, "r")
-    for line in blast:
-        for ID in IDs:
-            if ID in line:
-                out.write(line)
-    blast.close()
-    out.close()
+    blast = pd.read_table(blastfile,sep="\t",header=None)
+    sub = blast[blast[0].isin(IDs)]
+    sub.to_csv(output,index=False,header=False,sep="\t")
+
 
 def extract_fastq(IDs,fastq,output):
     """
@@ -347,7 +376,7 @@ def extract_fastq(IDs,fastq,output):
             if ID in inputs[i]:
                 out.write(">"+ID+"\n")
                 out.write(inputs[i+1]+"\n")
-     out.close()
+    out.close()
 
 
 ##########################################################################
@@ -407,28 +436,7 @@ def merge_file(file, output):
     os.system(cmd)
     return(0)
 
-def blast_filter(blastfile, output):
-    """
-    Filter blast results with thresholds:
-       identity >= 50%
-       
-    INPUT:
-    blastfile (string): blast file in format 6/7
-    output (string): output file
 
-    OUTPUT:
-    Filtered blast file
-    """
-    os.system("touch "+output)
-    out = open(output, "w")
-    fil = open(blastfile, "r")
-    for line in fil:
-        a = line.strip().split("\t")
-        if float(a[2]) >= 50:
-            out.write(line)
-    fil.close()
-    out.close()
-    return(0)
 
 
 
